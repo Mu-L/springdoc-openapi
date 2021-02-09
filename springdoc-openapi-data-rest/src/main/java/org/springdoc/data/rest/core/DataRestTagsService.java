@@ -31,6 +31,7 @@ import io.swagger.v3.oas.models.tags.Tag;
 import org.springdoc.core.OpenAPIService;
 import org.springdoc.core.SecurityService;
 import org.springdoc.data.rest.SpringRepositoryRestResourceProvider;
+
 import org.springframework.data.rest.webmvc.ProfileController;
 import org.springframework.data.rest.webmvc.alps.AlpsController;
 import org.springframework.util.CollectionUtils;
@@ -38,7 +39,7 @@ import org.springframework.web.method.HandlerMethod;
 
 /**
  * The type Data rest tags builder.
- * 
+ *
  * @author bnasslahsen
  */
 public class DataRestTagsService {
@@ -144,5 +145,4 @@ public class DataRestTagsService {
 						operation);
 		}
 	}
-
 }

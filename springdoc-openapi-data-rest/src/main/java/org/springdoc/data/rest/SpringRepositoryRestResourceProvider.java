@@ -41,6 +41,7 @@ import org.springdoc.core.fn.RouterOperation;
 import org.springdoc.data.rest.core.ControllerType;
 import org.springdoc.data.rest.core.DataRestRepository;
 import org.springdoc.data.rest.core.DataRestRouterOperationService;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.mapping.PersistentProperty;
@@ -64,7 +65,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMappi
 
 /**
  * The type Spring repository rest resource provider.
- * 
+ *
  * @author bnasslahsen
  */
 public class SpringRepositoryRestResourceProvider implements RepositoryRestResourceProvider {
@@ -73,6 +74,12 @@ public class SpringRepositoryRestResourceProvider implements RepositoryRestResou
 	 * The constant SPRING_DATA_REST_PACKAGE.
 	 */
 	private static final String SPRING_DATA_REST_PACKAGE = "org.springframework.data.rest";
+
+	/**
+	 * The constant REPOSITORY_SCHEMA_CONTROLLER.
+	 */
+	public static final String REPOSITORY_SCHEMA_CONTROLLER = SPRING_DATA_REST_PACKAGE
+			+ ".webmvc.RepositorySchemaController";
 
 	/**
 	 * The constant REPOSITORY_ENTITY_CONTROLLER.
@@ -85,12 +92,6 @@ public class SpringRepositoryRestResourceProvider implements RepositoryRestResou
 	 */
 	private static final String REPOSITORY_SEARCH_CONTROLLER = SPRING_DATA_REST_PACKAGE
 			+ ".webmvc.RepositorySearchController";
-
-	/**
-	 * The constant REPOSITORY_SCHEMA_CONTROLLER.
-	 */
-	public static final String REPOSITORY_SCHEMA_CONTROLLER = SPRING_DATA_REST_PACKAGE
-			+ ".webmvc.RepositorySchemaController";
 
 	/**
 	 * The constant REPOSITORY_PROPERTY_CONTROLLER.
@@ -118,37 +119,37 @@ public class SpringRepositoryRestResourceProvider implements RepositoryRestResou
 	/**
 	 * The Mappings.
 	 */
-	private ResourceMappings mappings;
+	private final ResourceMappings mappings;
 
 	/**
 	 * The Repositories.
 	 */
-	private Repositories repositories;
+	private final Repositories repositories;
 
 	/**
 	 * The Associations.
 	 */
-	private Associations associations;
+	private final Associations associations;
 
 	/**
 	 * The Data rest router operation builder.
 	 */
-	private DataRestRouterOperationService dataRestRouterOperationService;
+	private final DataRestRouterOperationService dataRestRouterOperationService;
 
 	/**
 	 * The Persistent entities.
 	 */
-	private PersistentEntities persistentEntities;
+	private final PersistentEntities persistentEntities;
 
 	/**
 	 * The Mapper.
 	 */
-	private ObjectMapper mapper;
+	private final ObjectMapper mapper;
 
 	/**
 	 * The Application context.
 	 */
-	private ApplicationContext applicationContext;
+	private final ApplicationContext applicationContext;
 
 	/**
 	 * Instantiates a new Spring repository rest resource provider.
@@ -239,7 +240,7 @@ public class SpringRepositoryRestResourceProvider implements RepositoryRestResou
 								.filter(requestMappingInfoHandlerMethodEntry -> ProfileController.class
 										.equals(requestMappingInfoHandlerMethodEntry.getValue().getBeanType())
 										|| AlpsController.class
-												.equals(requestMappingInfoHandlerMethodEntry.getValue().getBeanType()))
+										.equals(requestMappingInfoHandlerMethodEntry.getValue().getBeanType()))
 								.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a1, a2) -> a1));
 						routerOperationList
 								.addAll(findControllers(handlerMethodMapFiltered, resourceMetadata, null, openAPI));

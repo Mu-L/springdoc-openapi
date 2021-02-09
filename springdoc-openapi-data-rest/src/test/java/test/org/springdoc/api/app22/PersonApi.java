@@ -25,10 +25,8 @@ package test.org.springdoc.api.app22;
 
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @RepositoryRestController
-@ResponseBody
 public class PersonApi {
 
 	@GetMapping("/people/test")

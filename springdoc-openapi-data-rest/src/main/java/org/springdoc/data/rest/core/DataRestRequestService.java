@@ -46,6 +46,7 @@ import org.springdoc.core.ParameterInfo;
 import org.springdoc.core.RequestBodyInfo;
 import org.springdoc.core.RequestBodyService;
 import org.springdoc.core.SpringDocAnnotationsUtils;
+
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -60,7 +61,7 @@ import org.springframework.web.method.HandlerMethod;
 
 /**
  * The type Data rest request builder.
- * 
+ *
  * @author bnasslahsen
  */
 public class DataRestRequestService {
@@ -68,22 +69,22 @@ public class DataRestRequestService {
 	/**
 	 * The Local spring doc parameter name discoverer.
 	 */
-	private LocalVariableTableParameterNameDiscoverer localSpringDocParameterNameDiscoverer;
+	private final LocalVariableTableParameterNameDiscoverer localSpringDocParameterNameDiscoverer;
 
 	/**
 	 * The Parameter builder.
 	 */
-	private GenericParameterService parameterBuilder;
+	private final GenericParameterService parameterBuilder;
 
 	/**
 	 * The Request body builder.
 	 */
-	private RequestBodyService requestBodyService;
+	private final RequestBodyService requestBodyService;
 
 	/**
 	 * The Request builder.
 	 */
-	private AbstractRequestService requestBuilder;
+	private final AbstractRequestService requestBuilder;
 
 	/**
 	 * Instantiates a new Data rest request builder.

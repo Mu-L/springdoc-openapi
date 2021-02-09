@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springdoc.core.MethodAttributes;
 import org.springdoc.core.OperationService;
 import org.springdoc.core.SpringDocAnnotationsUtils;
+
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.data.repository.query.Param;
@@ -53,7 +54,6 @@ import org.springframework.web.method.HandlerMethod;
 
 /**
  * The type Data rest operation builder.
- * 
  * @author bnasslahsen
  */
 public class DataRestOperationService {
@@ -71,25 +71,26 @@ public class DataRestOperationService {
 	/**
 	 * The Data rest request builder.
 	 */
-	private DataRestRequestService dataRestRequestService;
+	private final DataRestRequestService dataRestRequestService;
 
 	/**
 	 * The Tags builder.
 	 */
-	private DataRestTagsService tagsBuilder;
+	private final DataRestTagsService tagsBuilder;
 
 	/**
 	 * The Data rest response builder.
 	 */
-	private DataRestResponseService dataRestResponseService;
+	private final DataRestResponseService dataRestResponseService;
 
 	/**
 	 * The Operation service.
 	 */
-	private OperationService operationService;
+	private final OperationService operationService;
 
 	/**
 	 * Instantiates a new Data rest operation builder.
+	 *
 	 * @param dataRestRequestService the data rest request builder
 	 * @param tagsBuilder the tags builder
 	 * @param dataRestResponseService the data rest response builder
@@ -130,6 +131,7 @@ public class DataRestOperationService {
 
 	/**
 	 * Build operation operation.
+	 *
 	 * @param handlerMethod the handler method
 	 * @param dataRestRepository the repository data rest
 	 * @param openAPI the open api
@@ -141,15 +143,15 @@ public class DataRestOperationService {
 	 * @param controllerType the controller type
 	 * @return the operation
 	 */
-	public Operation buildOperation(HandlerMethod handlerMethod, DataRestRepository dataRestRepository, OpenAPI openAPI,
-			RequestMethod requestMethod, String operationPath, MethodAttributes methodAttributes,
-			ResourceMetadata resourceMetadata, MethodResourceMapping methodResourceMapping,
-			ControllerType controllerType) {
+	public Operation buildOperation(HandlerMethod handlerMethod, DataRestRepository dataRestRepository,
+			OpenAPI openAPI, RequestMethod requestMethod, String operationPath, MethodAttributes methodAttributes,
+			ResourceMetadata resourceMetadata, MethodResourceMapping methodResourceMapping, ControllerType controllerType) {
 		Operation operation = null;
-		if (ControllerType.ENTITY.equals(controllerType) || ControllerType.PROPERTY.equals(controllerType)
+		if (ControllerType.ENTITY.equals(controllerType)
+				|| ControllerType.PROPERTY.equals(controllerType)
 				|| ControllerType.SCHEMA.equals(controllerType)) {
-			operation = buildEntityOperation(handlerMethod, dataRestRepository, openAPI, requestMethod, operationPath,
-					methodAttributes, resourceMetadata);
+			operation = buildEntityOperation(handlerMethod, dataRestRepository,
+					openAPI, requestMethod, operationPath, methodAttributes, resourceMetadata);
 		}
 		else if (ControllerType.SEARCH.equals(controllerType)) {
 			operation = buildSearchOperation(handlerMethod, dataRestRepository, openAPI, requestMethod,
@@ -176,10 +178,8 @@ public class DataRestOperationService {
 		if (dataRestRepository != null)
 			domainType = dataRestRepository.getDomainType();
 		Operation operation = initOperation(handlerMethod, domainType, requestMethod);
-		dataRestRequestService.buildParameters(domainType, openAPI, handlerMethod, requestMethod, methodAttributes,
-				operation, resourceMetadata);
-		dataRestResponseService.buildEntityResponse(operation, handlerMethod, openAPI, requestMethod, operationPath,
-				domainType, methodAttributes);
+		dataRestRequestService.buildParameters(domainType, openAPI, handlerMethod, requestMethod, methodAttributes, operation, resourceMetadata);
+		dataRestResponseService.buildEntityResponse(operation, handlerMethod, openAPI, requestMethod, operationPath, domainType, methodAttributes);
 		tagsBuilder.buildEntityTags(operation, handlerMethod, dataRestRepository);
 		if (domainType != null)
 			addOperationDescription(operation, requestMethod, domainType.getSimpleName().toLowerCase());
@@ -203,8 +203,8 @@ public class DataRestOperationService {
 		Operation operation = initOperation(handlerMethod, domainType, requestMethod);
 
 		// Add support for operation annotation
-		io.swagger.v3.oas.annotations.Operation apiOperation = AnnotatedElementUtils
-				.findMergedAnnotation(methodResourceMapping.getMethod(), io.swagger.v3.oas.annotations.Operation.class);
+		io.swagger.v3.oas.annotations.Operation apiOperation = AnnotatedElementUtils.findMergedAnnotation(methodResourceMapping.getMethod(),
+				io.swagger.v3.oas.annotations.Operation.class);
 
 		if (apiOperation != null)
 			operationService.parse(apiOperation, operation, openAPI, methodAttributes);
@@ -264,14 +264,14 @@ public class DataRestOperationService {
 
 	/**
 	 * Update parameter from annotations parameter.
+	 *
 	 * @param openAPI the open api
 	 * @param methodAttributes the method attributes
 	 * @param method the method
 	 * @param pName the p name
 	 * @return the parameter
 	 */
-	private Parameter getParameterFromAnnotations(OpenAPI openAPI, MethodAttributes methodAttributes, Method method,
-			String pName) {
+	private Parameter getParameterFromAnnotations(OpenAPI openAPI, MethodAttributes methodAttributes, Method method, String pName) {
 		Parameter parameter = null;
 		for (java.lang.reflect.Parameter reflectParameter : method.getParameters()) {
 			Param paramAnnotation = reflectParameter.getAnnotation(Param.class);
@@ -280,8 +280,7 @@ public class DataRestOperationService {
 						AnnotatedElementUtils.forAnnotations(reflectParameter.getAnnotations()),
 						io.swagger.v3.oas.annotations.Parameter.class);
 				if (parameterDoc != null && (!parameterDoc.hidden() || parameterDoc.schema().hidden())) {
-					parameter = dataRestRequestService.buildParameterFromDoc(parameterDoc, openAPI.getComponents(),
-							methodAttributes.getJsonViewAnnotation());
+					parameter = dataRestRequestService.buildParameterFromDoc(parameterDoc, openAPI.getComponents(), methodAttributes.getJsonViewAnnotation());
 					parameter.setName(pName);
 				}
 			}
@@ -316,24 +315,23 @@ public class DataRestOperationService {
 	 */
 	private void addOperationDescription(Operation operation, RequestMethod requestMethod, String entity) {
 		switch (requestMethod) {
-		case GET:
-			operation.setDescription("get-" + entity);
-			break;
-		case POST:
-			operation.setDescription("create-" + entity);
-			break;
-		case DELETE:
-			operation.setDescription("delete-" + entity);
-			break;
-		case PUT:
-			operation.setDescription("update-" + entity);
-			break;
-		case PATCH:
-			operation.setDescription("patch-" + entity);
-			break;
-		default:
-			throw new IllegalArgumentException(requestMethod.name());
+			case GET:
+				operation.setDescription("get-" + entity);
+				break;
+			case POST:
+				operation.setDescription("create-" + entity);
+				break;
+			case DELETE:
+				operation.setDescription("delete-" + entity);
+				break;
+			case PUT:
+				operation.setDescription("update-" + entity);
+				break;
+			case PATCH:
+				operation.setDescription("patch-" + entity);
+				break;
+			default:
+				throw new IllegalArgumentException(requestMethod.name());
 		}
 	}
-
 }
